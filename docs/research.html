@@ -1,0 +1,275 @@
+<title>윤이 영유 조사</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: 모바일 한 컬럼. 위에서 아래로 "다가오는 일정 → 후보 카드 → 추천 → 질문". 칩으로 근거 수준(확인/2차/미확인)을 표시 */
+:root{
+  --bg:#f3f6f5; --surface:#ffffff; --fg:#17211f; --muted:#5c6b67; --line:#dbe3e0;
+  --accent:#0d6b61; --accent-soft:#dcefeb;
+  --ok:#17744a; --ok-soft:#dff2e7;
+  --mid:#8a5a00; --mid-soft:#fbecc8;
+  --none:#a23a35; --none-soft:#f8dedc;
+  --font:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1716; --surface:#172220; --fg:#e6efed; --muted:#97a9a4; --line:#2a3a37;
+  --accent:#5fd0c1; --accent-soft:#16332f;
+  --ok:#74d69f; --ok-soft:#173528;
+  --mid:#f0c35f; --mid-soft:#3a2f12;
+  --none:#f09a94; --none-soft:#3b1d1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1716; --surface:#172220; --fg:#e6efed; --muted:#97a9a4; --line:#2a3a37;
+  --accent:#5fd0c1; --accent-soft:#16332f;
+  --ok:#74d69f; --ok-soft:#173528;
+  --mid:#f0c35f; --mid-soft:#3a2f12;
+  --none:#f09a94; --none-soft:#3b1d1b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--font);padding-inline:16px;padding-block:20px 48px;-webkit-text-size-adjust:100%}
+.wrap{max-width:640px;margin-inline:auto;display:flex;flex-direction:column;gap:28px}
+h1{font-size:1.65rem;line-height:1.25;font-weight:800;margin:0;text-wrap:balance}
+h2{font-size:1.1rem;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+h3{font-size:1.05rem;margin:0;font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+.sub{color:var(--muted);font-size:.88rem;margin-top:6px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tag{font-size:.78rem;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:.8rem;color:var(--muted);align-items:center}
+.chip{display:inline-block;font-size:.72rem;font-weight:700;padding:1px 7px;border-radius:5px;vertical-align:1px;margin-right:4px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-mid{background:var(--mid-soft);color:var(--mid)}
+.c-none{background:var(--none-soft);color:var(--none)}
+
+.events{display:flex;flex-direction:column;gap:10px}
+.ev{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start}
+.date{text-align:center;border-radius:10px;background:var(--accent-soft);color:var(--accent);padding:8px 0;line-height:1.1}
+.date b{display:block;font-size:1.5rem;font-weight:800}
+.date span{font-size:.75rem;font-weight:500}
+.ev.tbd .date{background:var(--none-soft);color:var(--none)}
+.ev .name{font-weight:700}
+.ev .when{font-size:.95rem;margin-top:2px}
+.ev .note{color:var(--muted);font-size:.85rem;margin-top:4px}
+.dday{font-size:.78rem;font-weight:700;color:var(--accent);margin-left:6px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.card+.card{margin-top:12px}
+.card>header{padding:14px 14px 10px;display:flex;flex-direction:column;gap:2px}
+.kind{font-size:.82rem;color:var(--muted)}
+dl{margin:0;display:grid;grid-template-columns:4.6rem 1fr;border-top:1px solid var(--line)}
+dt,dd{margin:0;padding:9px 14px;border-bottom:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
+dt{color:var(--muted);font-size:.82rem;padding-right:4px}
+dd{font-size:.9rem}
+dl>:nth-last-child(-n+2){border-bottom:0}
+.verdict{padding:12px 14px;background:var(--accent-soft);font-size:.88rem;border-top:1px solid var(--line)}
+
+.rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rank li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:28px 1fr;gap:10px}
+.rank .n{font-weight:800;font-size:1.1rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.rank b{display:block}
+.rank span{color:var(--muted);font-size:.86rem}
+.list{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.box h3{font-size:.95rem;margin-bottom:8px}
+.box+.box{margin-top:10px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;font-size:.85rem;min-width:420px;width:100%}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500;font-size:.78rem}
+footer{font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+footer a{overflow-wrap:anywhere}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>윤이 영어유치원 후보 조사</h1>
+    <p class="sub">분당 안에서만 · 미금역 거주 · 제이리 제외 · 2026-10-07 기준</p>
+    <div class="meta">
+      <span class="tag">2021년생, 내년 7세</span>
+      <span class="tag">영유 경험 없음</span>
+      <span class="tag">네이버 카페는 접근 불가로 제외</span>
+    </div>
+  </header>
+
+  <div class="legend" aria-label="표기 설명">
+    <span><span class="chip c-ok">확인</span>공식 페이지·원문</span>
+    <span><span class="chip c-mid">2차</span>포털·요약 글</span>
+    <span><span class="chip c-none">미확인</span>근거 없음</span>
+  </div>
+
+  <section>
+    <h2>설명회 일정</h2>
+    <div class="events">
+      <div class="ev" data-date="2026-10-20">
+        <div class="date"><span>10월</span><b>20</b><span>화</span></div>
+        <div>
+          <div class="name">BEK 분당<span class="dday"></span></div>
+          <div class="when">10:00~11:30</div>
+          <div class="note">정자일로 100 미켈란쉐르빌 4층 402호. 본설명, 캠퍼스 투어, 리더십팀 Q&amp;A. 신청서는 제출했고 "순차 연락"이라 <b>참석 확정 연락을 기다리는 중</b>. 문의 031-782-1004</div>
+        </div>
+      </div>
+      <div class="ev" data-date="2026-11-07">
+        <div class="date"><span>11월</span><b>7</b><span>토</span></div>
+        <div>
+          <div class="name">폴리 분당 (ECP7, 2021년생)<span class="dday"></span></div>
+          <div class="when">13:00~15:00</div>
+          <div class="note">분당 폴리어학원 5층 Library, 대면. <b>신청 확정 문자 받음.</b> 반드시 참석해야 방문상담을 예약할 수 있어요. 문의 031-715-2367</div>
+        </div>
+      </div>
+      <div class="ev tbd">
+        <div class="date"><span>일정</span><b>?</b><span>미정</span></div>
+        <div>
+          <div class="name">PSA 분당</div>
+          <div class="note">공개 웹에서 설명회 일정을 찾지 못함. 전화로 확인 필요</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>후보 비교</h2>
+
+    <article class="card">
+      <header>
+        <h3>PSA 분당</h3>
+        <span class="kind">절충식 · YBM 계열</span>
+      </header>
+      <dl>
+        <dt>위치</dt><dd><span class="chip c-mid">2차</span>정자일로198번길 15 제나프라자 8층</dd>
+        <dt>학비</dt><dd><span class="chip c-mid">2차</span>주5일 종일(6시간) 월 185만원, 60분반 173만원. <b>2025년 기준</b>이라 2027 학비는 재확인</dd>
+        <dt>정원</dt><dd><span class="chip c-mid">2차</span>클래스 16명</dd>
+        <dt>교사</dt><dd><span class="chip c-mid">2차</span>원어민 + 한국인 담임/부담임</dd>
+        <dt>셔틀</dt><dd><span class="chip c-mid">2차</span>있음. 노선·시간 <span class="chip c-none">미확인</span></dd>
+        <dt>수업</dt><dd><span class="chip c-mid">2차</span>평일 09:00~18:00</dd>
+      </dl>
+      <p class="verdict">영유 경험 없는 7세에게 가장 안전한 유형으로 보임(추정). 한국인 부담임이 적응에 유리.</p>
+    </article>
+
+    <article class="card">
+      <header>
+        <h3>BEK 분당</h3>
+        <span class="kind">영국 교육과정 · 테마 놀이-절충식</span>
+      </header>
+      <dl>
+        <dt>위치</dt><dd><span class="chip c-ok">확인</span>정자일로 100 미켈란쉐르빌 4층 402호</dd>
+        <dt>학비</dt><dd><span class="chip c-none">미확인</span>공개 자료 없음. 설명회에서 확인</dd>
+        <dt>정원</dt><dd><span class="chip c-none">미확인</span></dd>
+        <dt>대상</dt><dd><span class="chip c-mid">후기</span>4~7세, 내년 초등반 오픈 예정이라고 안내받음</dd>
+        <dt>특징</dt><dd><span class="chip c-mid">2차</span>탐구·놀이 기반, 중국어 필수, 이중언어 담임 지원</dd>
+        <dt>공식 SNS</dt><dd><span class="chip c-ok">확인</span>2026년 3월 Prep Year 3(2019년생) 신규 개설, 1:8 정원, 영국식·탐구 기반. 게시일 2025-05-29로 <b>1년 이상 된 글</b>. 이 학년 번호대로면 2021년생은 Year 2일 가능성이 높음 <b>(추정)</b></dd>
+        <dt>후기</dt><dd><span class="chip c-mid">후기</span>학부모 글 1건(개인 의견). 한 층 전체를 써서 반과 강당이 넓음. 원어민 + 이중언어 교사 모두 교육학 전공, 수업은 영어로 진행하고 학부모와는 한국어(주로 메일, PTC 정기). 활동 중심이고 '학교' 분위기. 5세까지 숙제 거의 없고 6세부터 라이팅 시작. 월 1회 정도 행사, 중국어는 중국인 교사 상주. 단점은 단독 건물이 아닌 점. <b>7세 신입 적응 사례는 없음</b></dd>
+        <dt>셔틀</dt><dd><span class="chip c-none">미확인</span></dd>
+      </dl>
+      <p class="verdict">적응 지원은 좋아 보이나 학비와 중국어 필수가 관건.</p>
+    </article>
+
+    <article class="card">
+      <header>
+        <h3>폴리 분당</h3>
+        <span class="kind">학습식</span>
+      </header>
+      <dl>
+        <dt>위치</dt><dd><span class="chip c-ok">확인</span>성남대로 349 시그마타워 5층(정자동). 정자역 도보 1분은 <span class="chip c-mid">2차</span></dd>
+        <dt>학비</dt><dd><span class="chip c-mid">2차</span>월 약 129~190만원, 교재·AR·셔틀 별도. <b>이번에 재검증 못함</b> (공식 교습비 글은 2019년, 본문 없음)</dd>
+        <dt>반</dt><dd><span class="chip c-ok">확인</span>ECP7(2021년생) 반이 있음. 신입 전용인지는 <span class="chip c-none">미확인</span></dd>
+        <dt>셔틀</dt><dd><span class="chip c-ok">확인</span>노선 1·3·5~13·15번, 매일반·월수금·월화수목·화목반. 미금·정자 정류장과 시간은 <span class="chip c-none">미확인</span></dd>
+        <dt>특징</dt><dd><span class="chip c-mid">2차</span>원어민 100%, AR 독서, McGraw Hill 교재</dd>
+      </dl>
+      <div class="verdict" style="background:var(--surface)">
+        <b>입학 절차</b> <span class="chip c-ok">확인</span>
+        <ol class="list" style="margin-top:6px">
+          <li>11/7 설명회 참석(필수)</li>
+          <li>설명회 신청 순서대로 방문상담 예약. 방문상담은 11/11(수)부터</li>
+          <li>방문상담 후 선착순 등록. 정원이 차면 대기 등록</li>
+        </ol>
+      </div>
+      <p class="verdict">읽기·쓰기 진도가 빠를 듯해, 영유 경험 없는 7세는 부담이 클 수 있음(추정).</p>
+    </article>
+  </section>
+
+  <section>
+    <h2>잠정 순위</h2>
+    <p class="sub" style="margin:-4px 0 10px">신입·진급반 적응 &gt; 미금역 거리 &gt; 총비용 &gt; 교육 방식. 설명회 이후 다시 정리</p>
+    <ol class="rank">
+      <li><span class="n">1</span><div><b>PSA 분당</b><span>소규모 정원, 한국인 부담임. 학비가 높은 편</span></div></li>
+      <li><span class="n">2</span><div><b>BEK 분당</b><span>놀이·테마 중심. 학비와 중국어 확인 필요</span></div></li>
+      <li><span class="n">3</span><div><b>마운트피스가</b><span>금곡동, 미금역과 가까울 가능성. 아직 미조사</span></div></li>
+      <li><span class="n">4</span><div><b>폴리 분당</b><span>신입 전용 반이 확인되고 윤이가 읽기·쓰기를 어느 정도 한다면 재검토</span></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>설명회에서 물어볼 것</h2>
+    <div class="box">
+      <h3>공통</h3>
+      <ul class="list">
+        <li>2027년 7세 신입반이 열리나요? 신입이 진급반에 들어가면 적응 지원은?</li>
+        <li>레벨테스트 금지(2026.10 시행) 이후 입학 절차는 어떻게 바뀌었나요?</li>
+        <li>월 총비용(교재·급식·셔틀·특활 포함)</li>
+        <li>미금역·정자 방면 셔틀 노선과 하원 시간</li>
+        <li>하루 인지교습 시간, 한국어 사용 시 벌점 여부</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>BEK</h3>
+      <ul class="list">
+        <li>2021년생이 들어가는 학년(Year 2?), 영유 경험 없는 아이 지원, 같은 나이 신입 사례</li>
+        <li>1:8 정원이 반 인원 기준인지</li>
+        <li>분기 결제 방식과 분기당 금액, 초등반 개설 계획</li>
+        <li>학비 총액, 중국어 수업 비중</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>폴리 ECP7</h3>
+      <ul class="list">
+        <li>설명회 당일 방문상담 예약을 바로 잡을 수 있는지</li>
+        <li>신입이 ECP7에 바로 들어가는지, 입학 전 평가 방식</li>
+        <li>실제 월 총비용(129~190만원이 맞는지)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>검증한 수치</h2>
+    <div class="scroll box" style="padding:4px">
+      <table>
+        <thead><tr><th>항목</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td>PSA 정원 16명, 월 185만원</td><td>출처와 일치. 다만 2차 자료, 학비는 2025 기준</td></tr>
+          <tr><td>폴리 월 129~190만원</td><td>공식 확인 실패</td></tr>
+          <tr><td>BEK 학비</td><td>공개 자료 없음</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>아직 남은 일</h2>
+    <ul class="list">
+      <li>PSA 설명회 일정과 2027 학비 전화 확인</li>
+      <li>마운트피스가, 레드웨건, 리틀타츠 공개 웹 조사</li>
+      <li>설명회(10/20, 11/7) 이후 추천 순위 재정리</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>출처</span>
+    <a href="https://bundang.poly-english.com/campus/newsNoticeView.do?noticeNo=72270&amp;searchClientCode=0711002">폴리 분당 설명회 공지 (2026-09-15)</a>
+    <a href="https://bundang.poly-english.com/campus/campusShuttleBusView.do?searchClientCode=0711002">폴리 분당 셔틀</a>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSep1k5aMKXD1mecWiwvuBp3e4XLOdg4ZXKq5M9SFeQRWhWW3g/viewform">BEK 분당 설명회 신청서</a>
+    <a href="https://learns.academy/academies/Q352F36JCH/psa-%EC%96%B4%ED%95%99%EC%9B%90-%EB%B6%84%EB%8B%B9%EC%A0%90">PSA 분당 (learns.academy)</a>
+    <span>자세한 근거는 저장소의 docs/analysis.md에 있어요.</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var today=new Date(); today.setHours(0,0,0,0);
+  document.querySelectorAll('.ev[data-date]').forEach(function(el){
+    var p=el.getAttribute('data-date').split('-');
+    var d=new Date(+p[0],+p[1]-1,+p[2]);
+    var n=Math.round((d-today)/86400000);
+    var t=el.querySelector('.dday');
+    if(!t) return;
+    t.textContent = n>0 ? 'D-'+n : n===0 ? '오늘' : '지남';
+  });
+})();
+</script>
