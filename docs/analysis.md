@@ -11,7 +11,7 @@
 ## 설명회 일정 (신청 완료: 폴리, BEK / PSA는 미확인)
 | 원 | 일시 | 장소 | 대상/비고 | 출처 |
 |---|---|---|---|---|
-| BEK 분당 | **2026-10-20(화) 10:00~11:30** | 정자일로 100 미켈란쉐르빌 4층 402호 | 본설명 → 캠퍼스 투어 → 리더십팀 Q&A. 신청서 제출 후 "순차 연락"이라 **참석 확정 연락 대기** [확인] | [신청서](https://docs.google.com/forms/d/e/1FAIpQLSep1k5aMKXD1mecWiwvuBp3e4XLOdg4ZXKq5M9SFeQRWhWW3g/viewform), 문의 031-782-1004 |
+| BEK 분당 | **2026-10-20(화) 10:00 시작 (약 1시간 30분)**, **09:50까지 도착** | BEK Bundang Campus Gym (정자일로 100 미켈란쉐르빌 상가동 4층 402호) | 본설명(교육철학·British Curriculum) → 캠퍼스 투어 → 리더십팀 Q&A. **신청 완료 문자 수신 [확인, 사용자 제공]**. 건물 내 주차 가능하나 혼잡해 대중교통 권장, **자녀 동반은 가급적 비권장** | [신청서](https://docs.google.com/forms/d/e/1FAIpQLSep1k5aMKXD1mecWiwvuBp3e4XLOdg4ZXKq5M9SFeQRWhWW3g/viewform), 문의 031-782-1004 |
 | 폴리 분당 | **2026-11-07(토) 13:00~15:00** | 분당 폴리어학원 5층 Library (성남대로 349 시그마타워 5층) | **ECP7 = 2021년생** 대면 설명회. **신청 확정 문자 수신 [확인, 사용자 제공]**. 설명회에 반드시 참석해야 방문상담 예약 가능 | [공지 2026-09-15](https://bundang.poly-english.com/campus/newsNoticeView.do?noticeNo=72270&searchClientCode=0711002), 문의 031-715-2367 |
 | PSA 분당 | 미확인 | - | 공개 웹에서 일정 못 찾음. 전화 문의 필요 | - |
 
